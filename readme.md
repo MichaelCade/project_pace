@@ -123,7 +123,7 @@ exit
 
 
 
-## Minio  
+## (NOT COMPLETE) Minio  
 In this optional section we will go against best practices and deploy our object storage export location for our K10 backups 
 
 
