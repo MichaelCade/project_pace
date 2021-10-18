@@ -6,6 +6,7 @@ We will also optionally deploy a minio cluster which can act as an export reposi
 
 
 ## Minikube 
+The first time you run the command below you will have to wait for the images to be downloaded locally to your machine, if you remove the container-runtime then the default will use docker. You can also add --driver=virtualbox if you want to use local virtualisation on your system. 
 
 ```
 minikube start --addons volumesnapshots,csi-hostpath-driver --apiserver-port=6443 --container-runtime=containerd -p mc-demo --kubernetes-version=1.21.2 
