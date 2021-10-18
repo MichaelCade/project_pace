@@ -8,7 +8,7 @@ We will also optionally deploy a minio cluster which can act as an export reposi
 ## Minikube 
 
 ```
-minikube start --addons volumesnapshots,csi-hostpath-driver -p kubecon-demo --kubernetes-version=1.21.2 
+minikube start --addons volumesnapshots,csi-hostpath-driver --apiserver-port=6443 --container-runtime=containerd -p mc-demo --kubernetes-version=1.21.2 
 ```
 
 ## Kasten K10 
