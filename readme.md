@@ -12,6 +12,14 @@ We will also optionally deploy a minio cluster which can act as an export reposi
 
 Container or virtual machine manager, such as: Docker, Hyperkit, Hyper-V, KVM, Parallels, Podman, VirtualBox, or VMware
 
+I would also suggest that we need bash which means the advice for Windows users is install Git bash
+
+For the above pre-reqs I use Arkade (https://github.com/alexellis/arkade) 
+
+```
+arkade get minikube helm kubectl
+```
+
 ## Minikube 
 The first time you run the command below you will have to wait for the images to be downloaded locally to your machine, if you remove the container-runtime then the default will use docker. You can also add --driver=virtualbox if you want to use local virtualisation on your system. 
 
