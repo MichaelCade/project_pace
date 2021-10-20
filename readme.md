@@ -12,7 +12,7 @@ We will also optionally deploy a minio cluster which can act as an export reposi
 
 Container or virtual machine manager, such as: Docker, Hyperkit, Hyper-V, KVM, Parallels, Podman, VirtualBox, or VMware
 
-I would also suggest that we need bash which means the advice for Windows users is install Git bash
+I would also suggest that we need bash which means the advice for Windows users is install Git bash but for best experience use WSL 
 
 For the above pre-reqs I use Arkade (https://github.com/alexellis/arkade) 
 
