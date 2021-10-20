@@ -4,6 +4,13 @@ This walkthrough enables you to deploy a Kubernetes cluster on your local workst
 
 We will also optionally deploy a minio cluster which can act as an export repository for your backups, this is not seen as best practice in anyway but this walkthrough is good for hands on experience and learning. 
 
+## Pre-reqs
+
+- minikube - https://minikube.sigs.k8s.io/docs/start/ 
+- helm - https://helm.sh/docs/intro/install/
+- kubectl - https://kubernetes.io/docs/tasks/tools/ 
+
+Container or virtual machine manager, such as: Docker, Hyperkit, Hyper-V, KVM, Parallels, Podman, VirtualBox, or VMware
 
 ## Minikube 
 The first time you run the command below you will have to wait for the images to be downloaded locally to your machine, if you remove the container-runtime then the default will use docker. You can also add --driver=virtualbox if you want to use local virtualisation on your system. 
