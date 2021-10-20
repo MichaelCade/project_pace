@@ -1,4 +1,4 @@
-## Deploying a simple Kubernetes cluster on your local machine 
+## Deploying a Kubernetes cluster on your local machine 
 
 This walkthrough enables you to deploy a Kubernetes cluster on your local workstation along with a Data Service (MySQL) and Kasten K10 to focus on Data Management of your Data Services. 
 
@@ -22,6 +22,8 @@ arkade get minikube helm kubectl
 
 ## Minikube 
 The first time you run the command below you will have to wait for the images to be downloaded locally to your machine, if you remove the container-runtime then the default will use docker. You can also add --driver=virtualbox if you want to use local virtualisation on your system. 
+
+for reference on my ubuntu laptop this process took 6m 52s to deploy the minikube cluster
 
 ```
 minikube start --addons volumesnapshots,csi-hostpath-driver --apiserver-port=6443 --container-runtime=containerd -p mc-demo --kubernetes-version=1.21.2 
@@ -141,6 +143,13 @@ kubectl delete pod -n ${APP_NAME} mysql-client
 kubectl run mysql-client --rm --env APP_NS=${APP_NAME} --env MYSQL_EXEC="${MYSQL_EXEC}" --env MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD} --env MYSQL_HOST=${MYSQL_HOST} --namespace ${APP_NAME} --tty -i --restart='Never' --image  docker.io/bitnami/mysql:8.0.23-debian-10-r57 --command -- bash
 echo "select * from Accounts;" |  ${MYSQL_EXEC}
 exit 
+```
+
+## Delete cluster 
+When you are finished with the demo you can simply delete the cluster using the following command note if you have changed the name in the above steps then you will need to also update things here. 
+
+```
+minikube delete -p mc-demo
 ```
 
 
