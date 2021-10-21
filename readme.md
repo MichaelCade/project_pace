@@ -2,9 +2,10 @@
 
 - [Project Pace](#project-pace)
   - [Deploying a Kubernetes cluster on your local machine](#deploying-a-kubernetes-cluster-on-your-local-machine)
-  - [Pre-reqs](#pre-reqs)
-  - [Minikube](#minikube)
-    - [Minicube on Windows with VMware Workstation](#minicube-on-windows-with-vmware-workstation)
+    - [Pre-reqs](#pre-reqs)
+      - [Pre-reqs on Windows](#pre-reqs-on-windows)
+    - [Minikube](#minikube)
+      - [Minicube on Windows with VMware Workstation](#minicube-on-windows-with-vmware-workstation)
   - [Kasten K10](#kasten-k10)
   - [MySQL](#mysql)
   - [Step 1 - Deploy your mysql app for the first time](#step-1---deploy-your-mysql-app-for-the-first-time)
@@ -22,7 +23,7 @@ This walkthrough enables you to deploy a Kubernetes cluster on your local workst
 
 We will also optionally deploy a minio cluster which can act as an export repository for your backups, this is not seen as best practice in anyway but this walkthrough is good for hands on experience and learning. 
 
-## Pre-reqs
+### Pre-reqs
 
 - minikube - https://minikube.sigs.k8s.io/docs/start/ 
 - helm - https://helm.sh/docs/intro/install/
@@ -38,7 +39,22 @@ For the above pre-reqs I use Arkade (https://github.com/alexellis/arkade)
 arkade get minikube helm kubectl
 ```
 
-## Minikube 
+#### Pre-reqs on Windows
+
+```
+choco install minikube
+```
+
+```
+choco install kubernetes-helm
+```
+
+```
+choco install kubernetes-cli
+```
+
+
+### Minikube 
 The first time you run the command below you will have to wait for the images to be downloaded locally to your machine, if you remove the container-runtime then the default will use docker. You can also add --driver=virtualbox if you want to use local virtualisation on your system. 
 
 for reference on my ubuntu laptop this process took 6m 52s to deploy the minikube cluster
@@ -52,7 +68,7 @@ I am also adding this as an option if you are using virtualbox this will command
 ```
  minikube start --driver=virtualbox --addons volumesnapshots,csi-hostpath-driver,metallb --nodes 2 -p cade-demo container-runtime=containerd --kubernetes-version=1.21.2 --apiserver-port=6443
 ```
-### Minicube on Windows with VMware Workstation 
+#### Minicube on Windows with VMware Workstation 
 
 ```
 $Env:Path += ";C:\Program Files (x86)\VMware\VMware Workstation"
