@@ -1,3 +1,21 @@
+# Project Pace
+
+- [Project Pace](#project-pace)
+  - [Deploying a Kubernetes cluster on your local machine](#deploying-a-kubernetes-cluster-on-your-local-machine)
+  - [Pre-reqs](#pre-reqs)
+  - [Minikube](#minikube)
+    - [Minicube on Windows with VMware Workstation](#minicube-on-windows-with-vmware-workstation)
+  - [Kasten K10](#kasten-k10)
+  - [MySQL](#mysql)
+  - [Step 1 - Deploy your mysql app for the first time](#step-1---deploy-your-mysql-app-for-the-first-time)
+  - [Step 2 - Add Data Source](#step-2---add-data-source)
+  - [Step 2a - Delete existing MySQL CLIENT](#step-2a---delete-existing-mysql-client)
+  - [Step 2b - Add Data to MySQL](#step-2b---add-data-to-mysql)
+  - [Create and Perform a backup of your data service](#create-and-perform-a-backup-of-your-data-service)
+  - [Application Transformation](#application-transformation)
+  - [Delete cluster](#delete-cluster)
+  - [(NOT COMPLETE) Minio](#not-complete-minio)
+
 ## Deploying a Kubernetes cluster on your local machine 
 
 This walkthrough enables you to deploy a Kubernetes cluster on your local workstation along with a Data Service (MySQL) and Kasten K10 to focus on Data Management of your Data Services. 
@@ -34,6 +52,14 @@ I am also adding this as an option if you are using virtualbox this will command
 ```
  minikube start --driver=virtualbox --addons volumesnapshots,csi-hostpath-driver,metallb --nodes 2 -p cade-demo container-runtime=containerd --kubernetes-version=1.21.2 --apiserver-port=6443
 ```
+### Minicube on Windows with VMware Workstation 
+
+```
+$Env:Path += ";C:\Program Files (x86)\VMware\VMware Workstation"
+minikube start --driver vmware --addons volumesnapshots,csi-hostpath-driver
+```
+
+![Minicube on Windows with VMware Workstation](media\minicube_windows_vmware.jpg)
 
 ## Kasten K10 
 
