@@ -8,10 +8,10 @@
       - [Minicube on Windows with VMware Workstation](#minicube-on-windows-with-vmware-workstation)
   - [Kasten K10](#kasten-k10)
   - [MySQL](#mysql)
-  - [Step 1 - Deploy your mysql app for the first time](#step-1---deploy-your-mysql-app-for-the-first-time)
-  - [Step 2 - Add Data Source](#step-2---add-data-source)
-  - [Step 2a - Delete existing MySQL CLIENT](#step-2a---delete-existing-mysql-client)
-  - [Step 2b - Add Data to MySQL](#step-2b---add-data-to-mysql)
+    - [Step 1 - Deploy your mysql app for the first time](#step-1---deploy-your-mysql-app-for-the-first-time)
+    - [Step 2 - Add Data Source](#step-2---add-data-source)
+    - [Step 2a - Delete existing MySQL CLIENT](#step-2a---delete-existing-mysql-client)
+    - [Step 2b - Add Data to MySQL](#step-2b---add-data-to-mysql)
   - [Create and Perform a backup of your data service](#create-and-perform-a-backup-of-your-data-service)
   - [Application Transformation](#application-transformation)
   - [Delete cluster](#delete-cluster)
@@ -117,7 +117,7 @@ kubectl patch storageclass standard -p '{"metadata": {"annotations":{"storagecla
 ```
 
 ## MySQL
-## Step 1 - Deploy your mysql app for the first time 
+### Step 1 - Deploy your mysql app for the first time 
 
 Deploying mysql via helm:
 
@@ -128,7 +128,7 @@ helm repo add bitnami https://charts.bitnami.com/bitnami
 helm install mysql-store bitnami/mysql --set primary.persistence.size=1Gi,volumePermissions.enabled=true --namespace=${APP_NAME}
 kubectl get pods -n ${APP_NAME} -w
 ```
-## Step 2 - Add Data Source
+### Step 2 - Add Data Source
 Populate the mysql database with initial data, run the following:
 
 ```
@@ -138,7 +138,7 @@ MYSQL_EXEC="mysql -h ${MYSQL_HOST} -u root --password=${MYSQL_ROOT_PASSWORD} -Dm
 echo MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
 ```
 
-## Step 2a - Delete existing MySQL CLIENT 
+### Step 2a - Delete existing MySQL CLIENT 
 if present and connect MySQL CLIENT
 
 ```
@@ -147,7 +147,7 @@ kubectl delete pod -n ${APP_NAME} mysql-client
 kubectl run mysql-client --rm --env APP_NS=${APP_NAME} --env MYSQL_EXEC="${MYSQL_EXEC}" --env MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD} --env MYSQL_HOST=${MYSQL_HOST} --namespace ${APP_NAME} --tty -i --restart='Never' --image  docker.io/bitnami/mysql:8.0.23-debian-10-r57 --command -- bash
 ```
 
-## Step 2b - Add Data to MySQL
+### Step 2b - Add Data to MySQL
 
 ```
 echo "create database myImportantData;" | mysql -h ${MYSQL_HOST} -u root --password=${MYSQL_ROOT_PASSWORD}
