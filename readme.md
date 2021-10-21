@@ -41,6 +41,8 @@ arkade get minikube helm kubectl
 
 #### Pre-reqs on Windows
 
+All Pre-reqs on Windows are available as a [Chocolatey](https://chocolatey.org/) package.
+
 ```
 choco install minikube
 ```
