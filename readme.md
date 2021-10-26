@@ -1,3 +1,25 @@
+# Project Pace
+- [Project Pace](#project-pace)
+  - [Deploying a Kubernetes cluster on your local machine](#deploying-a-kubernetes-cluster-on-your-local-machine)
+    - [Pre-reqs](#pre-reqs)
+    - [Other Pre-reqs & notes](#other-pre-reqs-&-notes)
+    - [Minikube](#minikube)
+  - [Kasten K10](#kasten-k10)
+  - [MySQL](#mysql)
+    - [Step 1 - Deploy your mysql app for the first time](#step-1---deploy-your-mysql-app-for-the-first-time)
+    - [Step 2 - Add Data Source](#step-2---add-data-source)
+    - [Step 2a - Create a MySQL CLIENT ](#step-2a---create-a-mysql-client)
+    - [Step 2b - Add Data to MySQL](#step-2b---add-data-to-mysql)
+  - [Create and Perform a backup of your data service](#create-and-perform-a-backup-of-your-data-service)
+  - [Application Restore with Transformation](#application-restore-with-transformation )
+  - [Delete cluster](#delete-cluster)
+  - [Exporting data using Minio S3 Storage](#exporting-data-using-minio-s3-storage)
+    - [Install Minio](#install-minio)
+    - [Accessing Minio](#accessing-minio)
+    - [Configuring Minio](#configuring-minio)
+    - [Configure S3 storage in Kasten](#configure-s3-storage-in-kasten)
+    - [Configure the Kasten Policy to export data to the S3 Storage](#configure-the-kasten-policy-to-export-data-to-the-s3-storage)
+
 # Deploying a Kubernetes cluster on your local machine 
 
 This walkthrough enables you to deploy a Kubernetes cluster on your local workstation along with a Data Service (MySQL) and Kasten K10 to focus on Data Management of your Data Services. 
@@ -20,7 +42,7 @@ For the above pre-reqs I use Arkade (https://github.com/alexellis/arkade)
 arkade get minikube helm kubectl
 ```
 
-## Other Pre-reqs + notes
+## Other Pre-reqs & notes
 
 Whilst testing with Mac OS X and Docker, we noticed performance issues, when Kubernetes was enabled within Docker, and the new experimental feature also enabled "Use the new Virtualization framework". Disabling this experimental feature and kubernetes and restarting docker and minikube resulted in a more performant lab environment. 
 
@@ -100,7 +122,7 @@ kubectl patch storageclass standard -p '{"metadata": {"annotations":{"storagecla
 ```
 
 ## MySQL
-## Step 1 - Deploy your mysql app for the first time 
+### Step 1 - Deploy your mysql app for the first time 
 
 Deploying mysql via helm:
 
@@ -112,7 +134,7 @@ helm install mysql-store bitnami/mysql --set primary.persistence.size=1Gi,volume
 kubectl get pods -n ${APP_NAME} -w
 ```
 
-## Step 2 - Add Data Source
+### Step 2 - Add Data Source
 Populate the mysql database with initial data, run the following:
 
 ```
@@ -122,7 +144,7 @@ MYSQL_EXEC="mysql -h ${MYSQL_HOST} -u root --password=${MYSQL_ROOT_PASSWORD} -Dm
 echo MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
 ```
 
-### Step 2a - Create a MySQL CLIENT 
+##### Step 2a - Create a MySQL CLIENT 
 We will run another container image to act as our client
 
 ```
@@ -135,7 +157,7 @@ Note: if you already have an existing mysql client pod running, delete with the 
 kubectl delete pod -n ${APP_NAME} mysql-client
 ```
 
-### Step 2b - Add Data to MySQL
+##### Step 2b - Add Data to MySQL
 
 ```
 echo "create database myImportantData;" | mysql -h ${MYSQL_HOST} -u root --password=${MYSQL_ROOT_PASSWORD}
