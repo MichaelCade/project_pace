@@ -59,7 +59,7 @@ docker run --rm -ti -v /var/run/docker.sock:/var/run/docker.sock \
     -v ${HOME}/.docker:/root/.docker \
     gcr.io/kasten-images/k10offline:4.5.1 pull images --newrepo localhost:5000
 ````
-This will download all the images to Docker Client, then push into your Repository which we setup inside of MiniKube.
+This will download all the images to Docker Client, then push into your Repository which we setup inside of MiniKube. You can run the same command without the final argument ````--newrepo```` and this will just download the images to your docker client. 
 
 ![image](https://user-images.githubusercontent.com/22192242/138971571-ed24951e-7ba3-4cd7-8fb0-6209b5e0af06.png)
 
