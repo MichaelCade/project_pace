@@ -90,4 +90,4 @@ helm install k10 k10-4.5.1.tgz --namespace kasten-io \
 
 ## Continue the setup following the main guide
 
-[Continue by following the main guide](../readme.md#mysql)
+[Continue by following the main guide](/readme.md#mysql)
