@@ -1,24 +1,26 @@
 # Project Pace
 - [Project Pace](#project-pace)
-  - [Deploying a Kubernetes cluster on your local machine](#deploying-a-kubernetes-cluster-on-your-local-machine)
-    - [Pre-reqs](#pre-reqs)
-    - [Other Pre-reqs & notes](#other-pre-reqs-&-notes)
-    - [Minikube](#minikube)
+- [Deploying a Kubernetes cluster on your local machine](#deploying-a-kubernetes-cluster-on-your-local-machine)
+  - [Pre-reqs](#pre-reqs)
+    - [Pre-reqs on Windows](#pre-reqs-on-windows)
+  - [Other Pre-reqs & notes](#other-pre-reqs--notes)
+  - [Minikube](#minikube)
+    - [Minicube on Windows with VMware Workstation](#minicube-on-windows-with-vmware-workstation)
   - [Kasten K10](#kasten-k10)
   - [MySQL](#mysql)
     - [Step 1 - Deploy your mysql app for the first time](#step-1---deploy-your-mysql-app-for-the-first-time)
     - [Step 2 - Add Data Source](#step-2---add-data-source)
-    - [Step 2a - Create a MySQL CLIENT ](#step-2a---create-a-mysql-client)
-    - [Step 2b - Add Data to MySQL](#step-2b---add-data-to-mysql)
+        - [Step 2a - Create a MySQL CLIENT](#step-2a---create-a-mysql-client)
+        - [Step 2b - Add Data to MySQL](#step-2b---add-data-to-mysql)
   - [Create and Perform a backup of your data service](#create-and-perform-a-backup-of-your-data-service)
-  - [Application Restore with Transformation](#application-restore-with-transformation )
+  - [Application Restore with Transformation](#application-restore-with-transformation)
   - [Delete cluster](#delete-cluster)
-  - [Exporting data using Minio S3 Storage](#exporting-data-using-minio-s3-storage)
-    - [Install Minio](#install-minio)
-    - [Accessing Minio](#accessing-minio)
-    - [Configuring Minio](#configuring-minio)
-    - [Configure S3 storage in Kasten](#configure-s3-storage-in-kasten)
-    - [Configure the Kasten Policy to export data to the S3 Storage](#configure-the-kasten-policy-to-export-data-to-the-s3-storage)
+- [Exporting data using Minio S3 Storage](#exporting-data-using-minio-s3-storage)
+  - [Install Minio](#install-minio)
+  - [Accessing Minio](#accessing-minio)
+  - [Configuring Minio](#configuring-minio)
+  - [Configure S3 storage in Kasten](#configure-s3-storage-in-kasten)
+  - [Configure the Kasten Policy to export data to the S3 Storage](#configure-the-kasten-policy-to-export-data-to-the-s3-storage)
 
 # Deploying a Kubernetes cluster on your local machine 
 
@@ -40,6 +42,22 @@ For the above pre-reqs I use Arkade (https://github.com/alexellis/arkade)
 
 ```
 arkade get minikube helm kubectl
+```
+
+### Pre-reqs on Windows
+
+All Pre-reqs on Windows are available as a [Chocolatey](https://chocolatey.org/) package.
+
+```
+choco install minikube
+```
+
+```
+choco install kubernetes-helm
+```
+
+```
+choco install kubernetes-cli
 ```
 
 ## Other Pre-reqs & notes
@@ -73,6 +91,16 @@ maximum number of CPUs.
 <number>[<unit>], where unit = b, k, m or g). Use "max" to use the maximum
 amount of memory.
 ```
+
+### Minicube on Windows with VMware Workstation 
+
+```
+$Env:Path += ";C:\Program Files (x86)\VMware\VMware Workstation"
+minikube start --driver vmware --addons volumesnapshots,csi-hostpath-driver
+```
+
+![Minicube on Windows with VMware Workstation](media/minicube_windows_vmware.jpg)
+
 
 ## Kasten K10 
 
