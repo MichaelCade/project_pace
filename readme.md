@@ -99,7 +99,7 @@ $Env:Path += ";C:\Program Files (x86)\VMware\VMware Workstation"
 minikube start --driver vmware --addons volumesnapshots,csi-hostpath-driver
 ```
 
-![Minicube on Windows with VMware Workstation](media\minicube_windows_vmware.jpg)
+![Minicube on Windows with VMware Workstation](media/minicube_windows_vmware.jpg)
 
 
 ## Kasten K10 
