@@ -40,6 +40,11 @@ MYSQL_HOST=mysql-store.${APP_NAME}.svc.cluster.local
 MYSQL_EXEC="mysql -h ${MYSQL_HOST} -u root --password=${MYSQL_ROOT_PASSWORD} -DmyImportantData -t"
 echo MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
 
+echo "Install Minio"
+
+helm repo add minio https://helm.min.io/
+helm install --namespace minio-operator --create-namespace --generate-name minio/minio-operator
+
 echo "Create cluster 2"
 minikube start --addons volumesnapshots,csi-hostpath-driver --apiserver-port=6443 --container-runtime=containerd -p mc-demo2 --kubernetes-version=1.21.2 
 
