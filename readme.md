@@ -22,6 +22,8 @@
   - [Configure S3 storage in Kasten](#configure-s3-storage-in-kasten)
   - [Configure the Kasten Policy to export data to the S3 Storage](#configure-the-kasten-policy-to-export-data-to-the-s3-storage)
 
+Additional Resources - [vZilla blog](https://vzilla.co.uk/vzilla-blog/project_pace-kasten-k10-demo-environment-for-everyone)
+
 # Deploying a Kubernetes cluster on your local machine 
 
 This walkthrough enables you to deploy a Kubernetes cluster on your local workstation along with a Data Service (MySQL) and Kasten K10 to focus on Data Management of your Data Services. 
