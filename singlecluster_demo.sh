@@ -7,7 +7,7 @@ echo "Deploy Kasten K10"
 helm repo add kasten https://charts.kasten.io/
 
 kubectl create namespace kasten-io
-helm install k10 kasten/k10 --namespace=kasten-io --set auth.tokenAuth.enabled=true --set injectKanisterSidecar.enabled=true --set-string injectKanisterSidecar.namespaceSelector.matchLabels.k10/injectKanisterSidecar=true
+helm install k10 kasten/k10 --namespace=kasten-io --set auth.tokenAuth.enabled=true --set injectKanisterSidecar.enabled=true --set-string injectKanisterSidecar.namespaceSelector.matchLabels.k10/injectKanisterSidecar=true 
 
 echo "Annotate Volumesnapshotclass"
 
