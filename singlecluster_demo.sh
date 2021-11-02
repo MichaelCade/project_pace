@@ -2,6 +2,9 @@
 echo "Create new cluster"
 minikube start --addons volumesnapshots,csi-hostpath-driver --apiserver-port=6443 --container-runtime=containerd -p mc-demo --kubernetes-version=1.21.2 
 
+echo "update helm repos if already present"
+helm repo update
+
 echo "Deploy Kasten K10"
 
 helm repo add kasten https://charts.kasten.io/

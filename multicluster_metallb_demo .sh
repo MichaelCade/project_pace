@@ -1,16 +1,20 @@
 #!/bin/bash
 echo "Create cluster 1 "
-minikube start --addons volumesnapshots,csi-hostpath-driver --apiserver-port=6443 --container-runtime=containerd -p mc-demo --kubernetes-version=1.21.2 
+minikube start --addons volumesnapshots,csi-hostpath-driver,metallb --apiserver-port=6443 --container-runtime=containerd -p mc-demo --kubernetes-version=1.21.2 
 
 echo "update helm repos if already present"
 helm repo update
+
+echo "Metallb config map with local IP address"
+kubectl delete configmap config -n metallb-system
+kubectl create -f metallbmcdemo.yaml
 
 echo "Deploy Kasten K10"
 
 helm repo add kasten https://charts.kasten.io/
 
 kubectl create namespace kasten-io
-helm install k10 kasten/k10 --namespace=kasten-io --set auth.tokenAuth.enabled=true --set injectKanisterSidecar.enabled=true --set-string injectKanisterSidecar.namespaceSelector.matchLabels.k10/injectKanisterSidecar=true
+helm install k10 kasten/k10 --namespace=kasten-io --set auth.tokenAuth.enabled=true --set externalGateway.create=true --set injectKanisterSidecar.enabled=true --set-string injectKanisterSidecar.namespaceSelector.matchLabels.k10/injectKanisterSidecar=true
 
 echo "Annotate Volumesnapshotclass"
 
@@ -49,14 +53,19 @@ helm repo add minio https://helm.min.io/
 helm install --namespace minio-operator --create-namespace --generate-name minio/minio-operator
 
 echo "Create cluster 2"
-minikube start --addons volumesnapshots,csi-hostpath-driver --apiserver-port=6443 --container-runtime=containerd -p mc-demo2 --kubernetes-version=1.21.2 
+minikube start --addons volumesnapshots,csi-hostpath-driver,metallb --apiserver-port=6443 --container-runtime=containerd -p mc-demo2 --kubernetes-version=1.21.2 
+
+echo "Metallb config map with local IP address"
+kubectl delete configmap config -n metallb-system
+kubectl create -f metallbmcdemo2.yaml
+
 
 echo "Deploy Kasten K10"
 
 helm repo add kasten https://charts.kasten.io/
 
 kubectl create namespace kasten-io
-helm install k10 kasten/k10 --namespace=kasten-io --set auth.tokenAuth.enabled=true --set injectKanisterSidecar.enabled=true --set-string injectKanisterSidecar.namespaceSelector.matchLabels.k10/injectKanisterSidecar=true
+helm install k10 kasten/k10 --namespace=kasten-io --set auth.tokenAuth.enabled=true --set externalGateway.create=true --set injectKanisterSidecar.enabled=true --set-string injectKanisterSidecar.namespaceSelector.matchLabels.k10/injectKanisterSidecar=true
 
 echo "Annotate Volumesnapshotclass"
 
