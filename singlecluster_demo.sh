@@ -43,4 +43,22 @@ MYSQL_HOST=mysql-store.${APP_NAME}.svc.cluster.local
 MYSQL_EXEC="mysql -h ${MYSQL_HOST} -u root --password=${MYSQL_ROOT_PASSWORD} -DmyImportantData -t"
 echo MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
 
+echo "Deploy PostgreSQL"
+kubectl create ns postgres-test
+helm install my-release --set primary.persistence.size=1Gi,volumePermissions.enabled=true --namespace postgres-test bitnami/postgresql
+kubectl get pods -n postgres-test
+
+echo "Waiting 5 mins for pod to come up"
+sleep 5m
+kubectl get pods -n postgres-test
+
+echo "Deploy MongoDB"
+kubectl create ns mongo-test
+helm install my-release bitnami/mongodb --set architecture="replicaset",primary.persistence.size=1Gi,volumePermissions.enabled=true --namespace mongo-test
+kubectl get pods -n mongo-test
+
+echo "Waiting 5 mins for pod to come up"
+sleep 5m
+kubectl get pods -n mongo-test
+
 echo "Environment Complete"
