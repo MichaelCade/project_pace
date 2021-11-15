@@ -25,7 +25,7 @@ kubectl patch storageclass standard -p '{"metadata": {"annotations":{"storagecla
 
 echo "Deploy MySQL"
 
-APP_NAME=mysql-test
+APP_NAME=my-production-app
 kubectl create ns ${APP_NAME}
 helm repo add bitnami https://charts.bitnami.com/bitnami
 helm install mysql-store bitnami/mysql --set primary.persistence.size=1Gi,volumePermissions.enabled=true --namespace=${APP_NAME}
