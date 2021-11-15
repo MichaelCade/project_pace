@@ -29,13 +29,7 @@ helm repo add bitnami https://charts.bitnami.com/bitnami
 helm install mysql-store bitnami/mysql --set primary.persistence.size=1Gi,volumePermissions.enabled=true --namespace=mysql-test
 kubectl get pods -n mysql-test
 
-echo "Waiting 5 mins for pod to come up"
-sleep 5m
-
-kubectl get pods -n mysql-test
-
 echo "MySQL root password"
-
 MYSQL_ROOT_PASSWORD=$(kubectl get secret --namespace mysql-test mysql-store -o jsonpath="{.data.mysql-root-password}" | base64 --decode)
 MYSQL_HOST=mysql-store.mysql-test.svc.cluster.local
 MYSQL_EXEC="mysql -h ${MYSQL_HOST} -u root --password=${MYSQL_ROOT_PASSWORD} -DmyImportantData -t"
@@ -46,10 +40,6 @@ kubectl create ns postgres-test
 helm install my-release --set primary.persistence.size=1Gi,volumePermissions.enabled=true --namespace postgres-test bitnami/postgresql
 kubectl get pods -n postgres-test
 
-echo "Waiting 5 mins for pod to come up"
-sleep 5m
-kubectl get pods -n postgres-test
-
 echo "Deploy MongoDB"
 kubectl create ns mongo-test
 helm install my-release bitnami/mongodb --set architecture="replicaset",primary.persistence.size=1Gi,volumePermissions.enabled=true --namespace mongo-test
@@ -57,6 +47,9 @@ kubectl get pods -n mongo-test
 
 echo "Waiting 5 mins for pod to come up"
 sleep 5m
+kubectl get pods -n mysql-test
+kubectl get pods -n postgres-test
 kubectl get pods -n mongo-test
+
 
 echo "Environment Complete"
