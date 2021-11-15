@@ -24,17 +24,19 @@ kubectl patch storageclass csi-hostpath-sc -p '{"metadata": {"annotations":{"sto
 kubectl patch storageclass standard -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}'
 
 echo "Deploy MySQL"
-kubectl create ns mysql-test
+
+APP_NAME=mysql-test
+kubectl create ns ${APP_NAME}
 helm repo add bitnami https://charts.bitnami.com/bitnami
-helm install mysql-store bitnami/mysql --set primary.persistence.size=1Gi,volumePermissions.enabled=true --namespace=mysql-test
-kubectl get pods -n mysql-test
+helm install mysql-store bitnami/mysql --set primary.persistence.size=1Gi,volumePermissions.enabled=true --namespace=${APP_NAME}
+kubectl get pods -n ${APP_NAME}
 
 echo "MySQL root password"
-MYSQL_ROOT_PASSWORD=$(kubectl get secret --namespace mysql-test mysql-store -o jsonpath="{.data.mysql-root-password}" | base64 --decode)
-MYSQL_HOST=mysql-store.mysql-test.svc.cluster.local
+
+MYSQL_ROOT_PASSWORD=$(kubectl get secret --namespace ${APP_NAME} mysql-store -o jsonpath="{.data.mysql-root-password}" | base64 --decode)
+MYSQL_HOST=mysql-store.${APP_NAME}.svc.cluster.local
 MYSQL_EXEC="mysql -h ${MYSQL_HOST} -u root --password=${MYSQL_ROOT_PASSWORD} -DmyImportantData -t"
 echo MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-
 echo "Deploy PostgreSQL"
 kubectl create ns postgres-test
 helm install my-release --set primary.persistence.size=1Gi,volumePermissions.enabled=true --namespace postgres-test bitnami/postgresql
