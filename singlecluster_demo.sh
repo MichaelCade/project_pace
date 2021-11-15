@@ -24,22 +24,20 @@ kubectl patch storageclass csi-hostpath-sc -p '{"metadata": {"annotations":{"sto
 kubectl patch storageclass standard -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}'
 
 echo "Deploy MySQL"
-
-APP_NAME=my-production-app
-kubectl create ns ${APP_NAME}
+kubectl create ns mysql-test
 helm repo add bitnami https://charts.bitnami.com/bitnami
-helm install mysql-store bitnami/mysql --set primary.persistence.size=1Gi,volumePermissions.enabled=true --namespace=${APP_NAME}
-kubectl get pods -n ${APP_NAME}
+helm install mysql-store bitnami/mysql --set primary.persistence.size=1Gi,volumePermissions.enabled=true --namespace=mysql-test
+kubectl get pods -n mysql-test
 
 echo "Waiting 5 mins for pod to come up"
 sleep 5m
 
-kubectl get pods -n ${APP_NAME}
+kubectl get pods -n mysql-test
 
 echo "MySQL root password"
 
-MYSQL_ROOT_PASSWORD=$(kubectl get secret --namespace ${APP_NAME} mysql-store -o jsonpath="{.data.mysql-root-password}" | base64 --decode)
-MYSQL_HOST=mysql-store.${APP_NAME}.svc.cluster.local
+MYSQL_ROOT_PASSWORD=$(kubectl get secret --namespace mysql-test mysql-store -o jsonpath="{.data.mysql-root-password}" | base64 --decode)
+MYSQL_HOST=mysql-store.mysql-test.svc.cluster.local
 MYSQL_EXEC="mysql -h ${MYSQL_HOST} -u root --password=${MYSQL_ROOT_PASSWORD} -DmyImportantData -t"
 echo MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
 
