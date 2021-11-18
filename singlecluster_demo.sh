@@ -53,5 +53,13 @@ kubectl get pods -n mysql-test
 kubectl get pods -n postgres-test
 kubectl get pods -n mongo-test
 
+echo "Display K10 Token Authentication" 
+TOKEN_NAME=$(kubectl get secret --namespace kasten-io|grep k10-k10-token | cut -d " " -f 1)
+TOKEN=$(kubectl get secret --namespace kasten-io $TOKEN_NAME -o jsonpath="{.data.token}" | base64 --decode)
 
+echo "Token value: "
+echo $TOKEN
+
+echo "to access your Kasten K10 dashboard open a new terminal and run" 
+echo "kubectl --namespace kasten-io port-forward service/gateway 8080:8000"
 echo "Environment Complete"
