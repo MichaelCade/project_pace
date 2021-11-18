@@ -129,11 +129,14 @@ kubectl --namespace kasten-io port-forward service/gateway 8080:8000
 
 The Kasten dashboard will be available at: `http://127.0.0.1:8080/k10/#/`
 
-To authenticate with the dashboard we now need the token which we can get with the following commands. The first command will show us all secrets in the Kasten namespace, we need the k10-k10-token-dnvrz (this will have a slightly different name in your environment), copy the token into your web browser 
+To authenticate with the dashboard we now need the token which we can get with the following commands. 
 
 ```
-kubectl get secrets -n kasten-io
-kubectl describe secret k10-k10-token-dnvrz -n kasten-io
+TOKEN_NAME=$(kubectl get secret --namespace kasten-io|grep k10-k10-token | cut -d " " -f 1)
+TOKEN=$(kubectl get secret --namespace kasten-io $TOKEN_NAME -o jsonpath="{.data.token}" | base64 --decode)
+
+echo "Token value: "
+echo $TOKENv
 ```
 ![image](https://user-images.githubusercontent.com/22192242/138279675-5f7e6867-299c-44d9-bd9f-6824628260d8.png)
 
