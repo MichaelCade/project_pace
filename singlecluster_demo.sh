@@ -62,8 +62,8 @@ echo "$(tput setaf 4)Display K10 Token Authentication"
 TOKEN_NAME=$(kubectl get secret --namespace kasten-io|grep k10-k10-token | cut -d " " -f 1)
 TOKEN=$(kubectl get secret --namespace kasten-io $TOKEN_NAME -o jsonpath="{.data.token}" | base64 --decode)
 
-echo "Token value: "
-echo $TOKEN
+echo "$(tput setaf 3)Token value: "
+echo "$(tput setaf 3)$TOKEN"
 
 echo "$(tput setaf 4)to access your Kasten K10 dashboard open a new terminal and run" 
 echo "$(tput setaf 3)kubectl --namespace kasten-io port-forward service/gateway 8080:8000"
