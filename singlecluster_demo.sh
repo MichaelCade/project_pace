@@ -47,13 +47,13 @@ kubectl create ns mongo-test
 helm install my-release bitnami/mongodb --set architecture="replicaset",primary.persistence.size=1Gi,volumePermissions.enabled=true --namespace mongo-test
 
 echo "Data Services deployment started" 
-kubectl get pods -n mysql-test
+kubectl get pods -n my-production-app
 kubectl get pods -n postgres-test
 kubectl get pods -n mongo-test
 
 echo "Waiting 5 mins for pod to come up"
 sleep 5m
-kubectl get pods -n mysql-test
+kubectl get pods -n my-production-app
 kubectl get pods -n postgres-test
 kubectl get pods -n mongo-test
 
