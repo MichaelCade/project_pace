@@ -94,14 +94,14 @@ maximum number of CPUs.
 amount of memory.
 ```
 
-### Minicube on Windows with VMware Workstation 
+### MiniKube on Windows with VMware Workstation 
 
 ```
 $Env:Path += ";C:\Program Files (x86)\VMware\VMware Workstation"
 minikube start --driver vmware --addons volumesnapshots,csi-hostpath-driver
 ```
 
-![Minicube on Windows with VMware Workstation](media/minicube_windows_vmware.jpg)
+![MiniKube on Windows with VMware Workstation](media/minicube_windows_vmware.jpg)
 
 
 ## Kasten K10 
