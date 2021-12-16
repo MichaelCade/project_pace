@@ -5,7 +5,7 @@
     - [Pre-reqs on Windows](#pre-reqs-on-windows)
   - [Other Pre-reqs & notes](#other-pre-reqs--notes)
   - [Minikube](#minikube)
-    - [Minicube on Windows with VMware Workstation](#minicube-on-windows-with-vmware-workstation)
+    - [Minikube on Windows with VMware Workstation](#minikube-on-windows-with-vmware-workstation)
   - [Kasten K10](#kasten-k10)
   - [MySQL](#mysql)
     - [Step 1 - Deploy your mysql app for the first time](#step-1---deploy-your-mysql-app-for-the-first-time)
