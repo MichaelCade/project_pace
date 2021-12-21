@@ -1,7 +1,7 @@
 #build cluster in minikube
 write-host "Building Minikube Cluster" - -ForegroundColor Green
 minikube start `
---memory 4096 `
+--memory 8192 `
 --cpus 4 `
 --disk-size 40GB `
 --driver=vmware `
