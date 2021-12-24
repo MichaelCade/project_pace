@@ -11,8 +11,8 @@ helm install k10 kasten/k10 `
 --set injectKanisterSidecar.enabled=true `
 --set-string injectKanisterSidecar.namespaceSelector.matchLabels.k10/injectKanisterSidecar=true
 
-write-host "Waiting 8 minutes for pods to start" -ForegroundColor Green
-Start-Sleep 480
+#wait for pods to come up
+kubectl wait --for=condition=ready --timeout=300s -n kasten-io pod -l component=catalog
 
 write-host "Setting default storage class" -ForegroundColor Green
 #Annotate the CSI Hostpath VolumeSnapshotClass for use with K10
