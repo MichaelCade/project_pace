@@ -6,13 +6,16 @@ helm repo add kasten https://charts.kasten.io/
 write-host "Installing Kasten" -ForegroundColor Green
 kubectl create namespace kasten-io
 helm install k10 kasten/k10 `
---namespace=kasten-io `
---set auth.tokenAuth.enabled=true `
---set injectKanisterSidecar.enabled=true `
---set-string injectKanisterSidecar.namespaceSelector.matchLabels.k10/injectKanisterSidecar=true
+    --namespace=kasten-io `
+    --set auth.tokenAuth.enabled=true `
+    --set injectKanisterSidecar.enabled=true `
+    --set-string injectKanisterSidecar.namespaceSelector.matchLabels.k10/injectKanisterSidecar=true `
+    --set eula.accept=true `
+    --set eula.company="Company" `
+    --set eula.email="a@a.com"
 
 #wait for pods to come up
-kubectl wait --for=condition=ready --timeout=300s -n kasten-io pod -l component=catalog
+Start-Sleep 480
 
 write-host "Setting default storage class" -ForegroundColor Green
 #Annotate the CSI Hostpath VolumeSnapshotClass for use with K10
@@ -31,7 +34,6 @@ $k10token = kubectl -n kasten-io -ojson get secret $secret | convertfrom-json | 
 #port forward Kasten Dashboard in a seperate powershell window to keep it open
 Start-Job -ScriptBlock { kubectl --namespace kasten-io port-forward service/gateway 8080:8000 }
 
-Clear-Host
 Write-Host "Please log into the Kasten Dashboard http://127.0.0.1:8080/k10/#/ using the token below `n" -ForegroundColor blue
 Write-Host '#########################################################################'  -ForegroundColor Green
 Write-Host ([Text.Encoding]::Utf8.GetString([Convert]::FromBase64String($k10token.data.token))) -ForegroundColor Green
