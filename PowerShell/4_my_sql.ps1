@@ -22,10 +22,10 @@ $MYSQL_EXEC ="mysql -h $MYSQL_HOST -u root --password=$password -DmyImportantDat
 
 #We will run another container image to act as our client
 kubectl run mysql-client `
---rm --env APP_NS=$APP_NAME `
---env MYSQL_EXEC=$MYSQL_EXEC `
---env MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD `
---env MYSQL_HOST=$MYSQL_HOST `
---namespace $APP_NAME `
+--rm --env APP_NS="$APP_NAME" `
+--env MYSQL_EXEC="$MYSQL_EXEC" `
+--env MYSQL_ROOT_PASSWORD="$root" `
+--env MYSQL_HOST="$MYSQL_HOST" `
+--namespace "$APP_NAME" `
 --tty -i --restart='Never' `
 --image  docker.io/bitnami/mysql:latest --command -- bash 
