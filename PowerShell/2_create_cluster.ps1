@@ -1,5 +1,5 @@
 #build cluster in minikube
-write-host "Building Minikube Cluster" - -ForegroundColor Green
+write-host "Building Minikube Cluster" -ForegroundColor Green
 minikube start `
     --memory 8192 `
     --cpus 4 `

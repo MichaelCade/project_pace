@@ -10,8 +10,9 @@ helm repo add bitnami https://charts.bitnami.com/bitnami
 #create test my_sql application call "my-production-app"
 write-host "Installing mysql" -ForegroundColor Green
 
-helm install mysql bitnami/mysql --namespace=mysql --set primary.persistence.size=1Gi, volumePermissions.enabled=true
-start-sleep 300
+helm install mysql bitnami/mysql --namespace=mysql --set primary.persistence.size=1Gi,volumePermissions.enabled=true
+Write-Host "Waiting for pod to start" -ForegroundColor Green
+start-sleep 60
 
 #Get password and decode it
 $password = kubectl get secret --namespace mysql mysql -o jsonpath="{.data.mysql-root-password}"
@@ -19,8 +20,20 @@ $MYSQL_ROOT_PASSWORD = ([Text.Encoding]::Utf8.GetString([Convert]::FromBase64Str
 
 #Exec into container and create a DB called K10Demo
 kubectl exec -it --namespace=mysql $(kubectl --namespace=mysql get pods -o jsonpath='{.items[0].metadata.name}') `
-    -- mysql -u root --password="$MYSQL_ROOT_PASSWORD" -e "CREATE DATABASE k10demo"
+    -- mysql -u root --password="$MYSQL_ROOT_PASSWORD" -e "CREATE DATABASE myImportantData"
 
-#Show Database exists.
 kubectl exec -it --namespace=mysql $(kubectl --namespace=mysql get pods -o jsonpath='{.items[0].metadata.name}') `
-    -- mysql -u root --password=$MYSQL_ROOT_PASSWORD -e "SHOW DATABASES LIKE 'k10demo'"
+    -- mysql -u root --password="$MYSQL_ROOT_PASSWORD" myImportantData -e "CREATE TABLE Accounts(name text, balance integer);"
+
+kubectl exec -it --namespace=mysql $(kubectl --namespace=mysql get pods -o jsonpath='{.items[0].metadata.name}') `
+    -- mysql -u root --password="$MYSQL_ROOT_PASSWORD" myImportantData -e `
+    "CREATE TABLE Accounts(name text, balance integer); 
+    insert into Accounts values('albert', 112);
+    insert into Accounts values('alfred', 358);
+    insert into Accounts values('beatrice', 1321);
+    insert into Accounts values('bartholomew', 34);
+    insert into Accounts values('edward', 5589);
+    insert into Accounts values('edwin', 144);
+    insert into Accounts values('edwina', 233);
+    insert into Accounts values('rastapopoulos', 377);
+    select * from Accounts;"

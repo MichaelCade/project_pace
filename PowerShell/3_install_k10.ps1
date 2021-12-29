@@ -15,20 +15,26 @@ helm install k10 kasten/k10 `
     --set eula.email="a@a.com"
 
 #wait for pods to come up
-Start-Sleep 480
+##need to do better than just a sleep
+Write-Host "Waiting for pods to be ready, This could take up to 5 minutes" -ForegroundColor Green
+Start-Sleep 300
+Write-Host "Pods are ready, moving on" -ForegroundColor Green
+<#$ready = kubectl get pod -n kasten-io --selector=component=catalog -o=jsonpath="{.items[*].status.conditions[1].type}"
+do {
+    Write-Host "Waiting for pods to be ready"
+    start-sleep 2
+} while ($ready -notlike "Ready")
+#>
+
 
 write-host "Setting default storage class" -ForegroundColor Green
 #Annotate the CSI Hostpath VolumeSnapshotClass for use with K10
 kubectl annotate volumesnapshotclass csi-hostpath-snapclass k10.kasten.io/is-snapshot-class=true
-
-#change default storage class
 kubectl patch storageclass csi-hostpath-sc -p '{\"metadata\": {\"annotations\":{\"storageclass.kubernetes.io/is-default-class\":\"true\"}}}'
-
 kubectl patch storageclass standard -p '{\"metadata\": {\"annotations\":{\"storageclass.kubernetes.io/is-default-class\":\"false\"}}}'
 
 #Get K10 secret and extract login token
 $secret = kubectl get secrets -n kasten-io | select-string -Pattern "k10-k10-token-\w*" | ForEach-Object { $_.Matches } | ForEach-Object { $_.Value }
-
 $k10token = kubectl -n kasten-io -ojson get secret $secret | convertfrom-json | Select-Object data
 
 #port forward Kasten Dashboard in a seperate powershell window to keep it open
@@ -38,4 +44,3 @@ Write-Host "Please log into the Kasten Dashboard http://127.0.0.1:8080/k10/#/ us
 Write-Host '#########################################################################'  -ForegroundColor Green
 Write-Host ([Text.Encoding]::Utf8.GetString([Convert]::FromBase64String($k10token.data.token))) -ForegroundColor Green
 Write-Host '#########################################################################'  -ForegroundColor Green
-
