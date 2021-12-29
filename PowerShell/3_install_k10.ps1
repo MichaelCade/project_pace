@@ -1,3 +1,10 @@
+#Check to see if script is running with Admin privileges
+if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+    Write-Host "Press any key to continue..."
+    $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown") | Out-Null
+    exit;
+}
+
 #Add helm repo
 write-host "Add Kasten Helm Chart" -ForegroundColor Green
 helm repo add kasten https://charts.kasten.io/
@@ -17,18 +24,16 @@ helm install k10 kasten/k10 `
 #wait for pods to come up
 ##need to do better than just a sleep
 Write-Host "Waiting for pods to be ready, This could take up to 5 minutes" -ForegroundColor Green
-Start-Sleep 300
-Write-Host "Pods are ready, moving on" -ForegroundColor Green
-<#$ready = kubectl get pod -n kasten-io --selector=component=catalog -o=jsonpath="{.items[*].status.conditions[1].type}"
+#Start-Sleep 300
+$ready = kubectl get pod -n kasten-io --selector=component=catalog -o=jsonpath='{.items[*].status.phase}'
 do {
     Write-Host "Waiting for pods to be ready"
     start-sleep 2
-} while ($ready -notlike "Ready")
-#>
+} while ($ready -notlike "Running")
+Write-Host "Pods are ready, moving on" -ForegroundColor Green
 
-
-write-host "Setting default storage class" -ForegroundColor Green
 #Annotate the CSI Hostpath VolumeSnapshotClass for use with K10
+write-host "Setting default storage class" -ForegroundColor Green
 kubectl annotate volumesnapshotclass csi-hostpath-snapclass k10.kasten.io/is-snapshot-class=true
 kubectl patch storageclass csi-hostpath-sc -p '{\"metadata\": {\"annotations\":{\"storageclass.kubernetes.io/is-default-class\":\"true\"}}}'
 kubectl patch storageclass standard -p '{\"metadata\": {\"annotations\":{\"storageclass.kubernetes.io/is-default-class\":\"false\"}}}'

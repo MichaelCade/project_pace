@@ -1,8 +1,16 @@
 #vars
+##Change these based on what you need to install.
 $workstation = 1
 $kubectl = 1
 $helm = 1
 $minikube = 1
+
+#Check to see if script is running with Admin privileges
+if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+    Write-Host "Press any key to continue..."
+    $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown") | Out-Null
+    exit;
+}
 
 #Internet Explorer's first launch configuration, This allows invoke-webrequest from running without any issues
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Internet Explorer\Main" -Name "DisableFirstRunCustomize" -Value 2
@@ -78,4 +86,7 @@ if ($minikube -eq 1) {
 
     }
 }
-write-host "Please close this window and launch a new powershell window as administrator to start creating your cluster" -ForegroundColor Green
+
+#Refresh path variable to allow Helm/Kubectl to work.
+$env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+

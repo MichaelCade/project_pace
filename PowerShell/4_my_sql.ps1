@@ -1,9 +1,16 @@
+#Check to see if script is running with Admin privileges
+if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+    Write-Host "Press any key to continue..."
+    $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown") | Out-Null
+    exit;
+}
+
 #Create Namespace for app
 write-host "creating namespace" -ForegroundColor Green
 kubectl create namespace mysql
 
 #Add Helm Chart for Bitnami
-write-host "Adding Helm Repo" - -ForegroundColor Green
+write-host "Adding Helm Repo" -ForegroundColor Green
 helm repo add bitnami https://charts.bitnami.com/bitnami
 
 #install mysql
@@ -21,9 +28,6 @@ $MYSQL_ROOT_PASSWORD = ([Text.Encoding]::Utf8.GetString([Convert]::FromBase64Str
 #Exec into container and create a DB called K10Demo
 kubectl exec -it --namespace=mysql $(kubectl --namespace=mysql get pods -o jsonpath='{.items[0].metadata.name}') `
     -- mysql -u root --password="$MYSQL_ROOT_PASSWORD" -e "CREATE DATABASE myImportantData"
-
-kubectl exec -it --namespace=mysql $(kubectl --namespace=mysql get pods -o jsonpath='{.items[0].metadata.name}') `
-    -- mysql -u root --password="$MYSQL_ROOT_PASSWORD" myImportantData -e "CREATE TABLE Accounts(name text, balance integer);"
 
 kubectl exec -it --namespace=mysql $(kubectl --namespace=mysql get pods -o jsonpath='{.items[0].metadata.name}') `
     -- mysql -u root --password="$MYSQL_ROOT_PASSWORD" myImportantData -e `
