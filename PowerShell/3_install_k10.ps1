@@ -1,5 +1,6 @@
 #Check to see if script is running with Admin privileges
 if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+    Write-Host "Please relaunch Powershell as admin" -BackgroundColor Red
     Write-Host "Press any key to continue..."
     $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown") | Out-Null
     exit;
@@ -27,8 +28,9 @@ Write-Host "Waiting for pods to be ready, This could take up to 5 minutes" -Fore
 #Start-Sleep 300
 $ready = kubectl get pod -n kasten-io --selector=component=catalog -o=jsonpath='{.items[*].status.phase}'
 do {
-    Write-Host "Waiting for pods to be ready"
-    start-sleep 2
+    Write-Host "Waiting for pods to be ready" -ForegroundColor Green
+    start-sleep 20
+    $ready = kubectl get pod -n kasten-io --selector=component=catalog -o=jsonpath='{.items[*].status.phase}'
 } while ($ready -notlike "Running")
 Write-Host "Pods are ready, moving on" -ForegroundColor Green
 
