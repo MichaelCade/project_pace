@@ -5,7 +5,7 @@ minikube start `
     --cpus 4 `
     --disk-size 40GB `
     --driver=vmware `
-    --addons volumesnapshots, csi-hostpath-driver `
+    --addons volumesnapshots,csi-hostpath-driver `
     --apiserver-port=6443 `
     --container-runtime=containerd `
     --kubernetes-version=1.21.2
