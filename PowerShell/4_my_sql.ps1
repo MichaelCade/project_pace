@@ -19,8 +19,10 @@ helm repo add bitnami https://charts.bitnami.com/bitnami
 write-host "Installing mysql" -ForegroundColor Green
 
 helm install mysql bitnami/mysql --namespace=mysql --set primary.persistence.size=1Gi,volumePermissions.enabled=true
-Write-Host "Waiting for pod to start" -ForegroundColor Green
-start-sleep 60
+
+#wait for pods to be ready
+Start-Sleep 60
+Write-Host "Pods are ready, moving on" -ForegroundColor Green
 
 #Get password and decode it
 $password = kubectl get secret --namespace mysql mysql -o jsonpath="{.data.mysql-root-password}"
