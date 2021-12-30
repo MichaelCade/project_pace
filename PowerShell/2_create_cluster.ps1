@@ -16,4 +16,4 @@ minikube start `
     --addons volumesnapshots,csi-hostpath-driver `
     --apiserver-port=6443 `
     --container-runtime=containerd `
-    --kubernetes-version=1.21.2
+    --kubernetes-version=1.21.8
