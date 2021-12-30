@@ -77,7 +77,7 @@ Start-Sleep 2
 if ($minikube -eq 1) {
     new-item  -path "C:\minikube" -ItemType Directory -Force
     write-host "Downloading Minikube" -ForegroundColor Green
-    Invoke-WebRequest -OutFile "c:\users\$env:UserName\Downloads\minikube.exe" -Uri 'https://github.com/kubernetes/minikube/releases/download/latest/minikube-windows-amd64.exe' -UseBasicParsing
+    Invoke-WebRequest -OutFile "c:\users\$env:UserName\Downloads\minikube.exe" -Uri 'https://github.com/kubernetes/minikube/releases/download/v1.23.2/minikube-windows-amd64.exe' -UseBasicParsing
     Copy-Item "c:\users\$env:UserName\Downloads\minikube.exe" -Destination "C:\minikube"
 
     $oldPath = [Environment]::GetEnvironmentVariable('Path', [EnvironmentVariableTarget]::Machine)

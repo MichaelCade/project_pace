@@ -21,7 +21,14 @@ write-host "Installing mysql" -ForegroundColor Green
 helm install mysql bitnami/mysql --namespace=mysql --set primary.persistence.size=1Gi,volumePermissions.enabled=true
 
 #wait for pods to be ready
-Start-Sleep 60
+Write-Host "Waiting for pods to be ready, This could take up to 2 minutes" -ForegroundColor Green
+start-sleep 20
+$ready = kubectl get pods -n mysql mysql-0 -o=jsonpath='{.status.conditions[1].status}'
+do {
+    Write-Host "Waiting for pods to be ready" -ForegroundColor Green
+    start-sleep 20
+    $ready = kubectl get pods -n mysql mysql-0 -o=jsonpath='{.status.conditions[1].status}'
+} while ($ready -notlike "True")
 Write-Host "Pods are ready, moving on" -ForegroundColor Green
 
 #Get password and decode it
