@@ -5,7 +5,7 @@
     - [Pre-reqs on Windows](#pre-reqs-on-windows)
   - [Other Pre-reqs & notes](#other-pre-reqs--notes)
   - [Minikube](#minikube)
-    - [Minicube on Windows with VMware Workstation](#minicube-on-windows-with-vmware-workstation)
+    - [Minikube on Windows with VMware Workstation](#minikube-on-windows-with-vmware-workstation)
   - [Kasten K10](#kasten-k10)
   - [MySQL](#mysql)
     - [Step 1 - Deploy your mysql app for the first time](#step-1---deploy-your-mysql-app-for-the-first-time)
@@ -94,14 +94,14 @@ maximum number of CPUs.
 amount of memory.
 ```
 
-### Minicube on Windows with VMware Workstation 
+### MiniKube on Windows with VMware Workstation 
 
 ```
 $Env:Path += ";C:\Program Files (x86)\VMware\VMware Workstation"
 minikube start --driver vmware --addons volumesnapshots,csi-hostpath-driver
 ```
 
-![Minicube on Windows with VMware Workstation](media/minicube_windows_vmware.jpg)
+![MiniKube on Windows with VMware Workstation](media/minicube_windows_vmware.jpg)
 
 
 ## Kasten K10 
@@ -136,7 +136,7 @@ TOKEN_NAME=$(kubectl get secret --namespace kasten-io|grep k10-k10-token | cut -
 TOKEN=$(kubectl get secret --namespace kasten-io $TOKEN_NAME -o jsonpath="{.data.token}" | base64 --decode)
 
 echo "Token value: "
-echo $TOKENv
+echo $TOKEN
 ```
 ![image](https://user-images.githubusercontent.com/22192242/138279675-5f7e6867-299c-44d9-bd9f-6824628260d8.png)
 
