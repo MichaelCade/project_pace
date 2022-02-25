@@ -101,3 +101,8 @@ Open a browser and navigate to [http://localhost:9090/](http://localhost:9090/)
 - Delete Pac-Man Namespace
 - Restore everything back to original location using K10 
 - Clone and Transformation - Restore to other StorageClass available in cluster. 
+
+
+## Clear up 
+
+`minikube delete -p vug-demo`
