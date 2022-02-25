@@ -1,5 +1,7 @@
 ## Zero to Hero: Kubernetes and Kasten K10
 
+![](media/VUG.png)
+
 This is for a session delivered at a Veeam User Group to show how we can get Kasten K10 up and running on your local (x86 architecture) system using Minikube. 
 
 In this session we are going to deploy a minikube cluster to our local workstation, deploy some data services and then Kasten K10 to the same cluster. The performance of this will very much depend on your system. But the highlight here is that we can run K10 across multiple Kubernetes environments and with Minikube we do not need to pay for a cloud providers managed Kubernetes cluster to get hands-on. 
