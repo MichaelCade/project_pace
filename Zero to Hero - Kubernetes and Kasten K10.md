@@ -1,6 +1,7 @@
 ## Zero to Hero: Kubernetes and Kasten K10
-
+<p align="center">
 <img src="/media/VUG.png" width=400 height=400>
+</p>
 
 This is for a session delivered at a Veeam User Group to show how we can get Kasten K10 up and running on your local (x86 architecture) system using Minikube. 
 
