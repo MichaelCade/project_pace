@@ -76,7 +76,7 @@ TOKEN_NAME=$(kubectl get secret --namespace kasten-io|grep k10-k10-token | cut -
 TOKEN=$(kubectl get secret --namespace kasten-io $TOKEN_NAME -o jsonpath="{.data.token}" | base64 --decode)
 
 echo "Token value: "
-echo $TOKENv
+echo $TOKEN
 ```
 
 ### Deploy Data Services (Pac-Man)
