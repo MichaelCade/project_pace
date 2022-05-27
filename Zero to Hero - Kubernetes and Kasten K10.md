@@ -28,7 +28,7 @@ We will also need helm to deploy some of our data services.
 
 Once we have minikube available in our environment 
 
-`minikube start --addons volumesnapshots,csi-hostpath-driver --apiserver-port=6443 --container-runtime=containerd -p vug-demo --kubernetes-version=1.21.2`
+`minikube start --addons volumesnapshots,csi-hostpath-driver --apiserver-port=6443 --container-runtime=containerd -p webinar-demo --kubernetes-version=1.21.2`
 
 With the above we will be using Docker as our virtual machine manager. If you have not already you can grab Docker cross platform. 
 [Get Docker](https://docs.docker.com/get-docker/)
@@ -46,6 +46,7 @@ kubectl patch storageclass csi-hostpath-sc -p '{"metadata": {"annotations":{"sto
 
 kubectl patch storageclass standard -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}'
 ```
+Patching the storage as above before installing Kasten K10 will result in the Prometheus pod not starting. 
 
 ### Deploy Kasten K10 
 
