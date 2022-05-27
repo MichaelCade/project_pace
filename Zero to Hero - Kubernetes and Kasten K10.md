@@ -90,9 +90,51 @@ Make sure you are in the directory where this YAML config file is and run agains
 
 To expose and access this run the following port-forward in a new terminal
 
-`kubectl port-forward svc/pacman 9090:80 -n pacman`
+`kubectl port-forward svc/pacman 9191:80 -n pacman`
 
 Open a browser and navigate to [http://localhost:9090/](http://localhost:9090/)
+
+## Install Minio
+```
+helm repo add minio https://operator.min.io/
+helm install --namespace minio-operator --create-namespace --generate-name minio/minio-operator
+```
+## Accessing Minio
+
+Get the JWT for logging in to the console
+````
+kubectl get secret $(kubectl get serviceaccount console-sa --namespace minio-operator -o jsonpath="{.secrets[0].name}") --namespace minio-operator -o jsonpath="{.data.token}" | base64 --decode
+````
+Open a new terminal window to setup port forward to access the Minio Management page in your browser
+````
+kubectl --namespace minio-operator port-forward svc/console 9090:9090
+````
+Open your browser to http://127.0.0.1:9090 and login with the token from the above step.
+
+## Configuring Minio
+
+On the Tenants tab, select the default tenant (should be named "minio1", then select the "Manage Tenant" button.
+
+1. Within the tenant, click "Service Accounts" and create a service account with the default settings. Copy the Access Key and Secret Key or download the file. 
+2. Click Buckets, and create a bucket with the default settings.
+
+## Configure S3 storage in Kasten
+1. Click settings in the top right hand corner. Select locations and Create new location.
+2. Provide a name, select "S3 Compatible", enter your Access Key and Secret Key you saved earlier.
+3. Set the endpoint as "minio.default.svc.cluster.local" (this is the internal k8s dns name) and select to skip SSL verification.  
+4. Provide the bucket name you configured and click "Save Profile".
+
+## Configure the Kasten Policy to export data to the S3 Storage
+1. Edit your existing policy.
+2. Enable the setting "Enable Backups via Snapshot Exports"
+3. Select the S3 location profile you have just created, and set the schedule as necessary. Click the "Edit Policy" button. 
+4. Manually run the policy and observe the run on the homescreen. After the backup run, you will see a new task called "Export".
+
+Manually browse the Bucket from the Minio browser console, you will see your bucket contains a folder called "k10" and within that the protection data. 
+
+![image](https://user-images.githubusercontent.com/22192242/138359395-b4175851-9da8-46d7-86b7-7cf3ee1e5fee.png)
+
+![image](https://user-images.githubusercontent.com/22192242/138359447-a6c316f7-a8d6-414b-af7e-6157867cb5bc.png)
 
 ### Dive into Kasten K10 
 
@@ -104,7 +146,6 @@ Open a browser and navigate to [http://localhost:9090/](http://localhost:9090/)
 - Restore everything back to original location using K10 
 - Clone and Transformation - Restore to other StorageClass available in cluster. 
 
-
 ## Clear up 
 
-`minikube delete -p vug-demo`
+`minikube delete -p webinar-demo`
