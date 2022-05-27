@@ -91,7 +91,6 @@ Make sure you are in the directory where this YAML config file is and run agains
 To expose and access this run the following port-forward in a new terminal
 
 `kubectl port-forward svc/pacman 9090:80 -n pacman`
-`kubectl port-forward deployment/pacman 9090:80 -n pacman`
 
 Open a browser and navigate to [http://localhost:9090/](http://localhost:9090/)
 
