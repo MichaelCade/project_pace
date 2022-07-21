@@ -13,4 +13,4 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: kasten-pre-sync
-  namespace: mysql
+  namespace: pacman
