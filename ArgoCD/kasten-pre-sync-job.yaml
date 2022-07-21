@@ -1,0 +1,67 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  generateName: kasten-pre-sync-
+  annotations:
+    argocd.argoproj.io/hook: PreSync
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  template:
+    metadata:
+      creationTimestamp: null
+    spec:
+      serviceAccountName: kasten-pre-sync
+      containers:
+       - image: ghcr.io/kanisterio/kanister-kubectl:1.18
+         command:
+           - sh
+           - -o
+           - errexit
+           - -o
+           - pipefail
+           - -c
+           - |
+             # create a backup action on the project 
+             backup_name="pacman-backup-$(date| tr ' ' '-'|tr ':' '-'|tr '[:upper:]' '[:lower:]')"
+             cat <<EOF | kubectl create -f -
+             apiVersion: actions.kio.kasten.io/v1alpha1
+             kind: BackupAction
+             metadata:  
+               name: $backup_name
+               namespace: $NAMESPACE   
+             spec:
+               filters: {}              
+               subject:
+                 name: $NAMESPACE
+                 namespace: $NAMESPACE
+             EOF
+            
+             # Wait until the backup action is complete 
+             count=30
+             delay=3
+             total_time=$((count*delay))
+             while true 
+             do
+               state=$(kubectl get backupaction -n $NAMESPACE $backup_name -o jsonpath='{.status.state}')
+               if [ "$state" =  "Complete" ]
+               then 
+                 echo "backup action $backup_name is Complete"                
+                 break
+               else 
+                 echo "backup action $backup_name is ${state}"
+                 count=$((count-1))
+                 sleep $delay
+               fi
+               if [ $count = 0 ] 
+               then 
+                 echo "fail to get backup action $backup_name Complete after ${total_time} seconds"
+                 exit 1 
+               fi
+             done 
+         env:          
+         - name: NAMESPACE
+           valueFrom:
+             fieldRef:
+               fieldPath: metadata.namespace            
+         name: backupper
+      restartPolicy: Never
