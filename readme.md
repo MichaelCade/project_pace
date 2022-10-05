@@ -23,6 +23,8 @@ Each demo environment is going to always consist of at least
 - 1 minikube cluster with specific addons enabled. 
 - Kasten K10 deployed (unless a lab focused on the deployment options)
 
+This can be achieved by following the instructions below or you could use the [baseline bash script in the repository](baseline.sh) 
+
 ## minikube installation 
 
 Initially we need to have the following in place on our systems, the instructions found should be viable across x86 architecture and across Windows, Linux and MacOS operating systems. 
