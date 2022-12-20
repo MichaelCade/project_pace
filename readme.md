@@ -119,4 +119,5 @@ Now you have at least one minikube cluster up and running and available with Kas
 - ClickOps - Kasten K10 - UI-only walkthrough
 - Kasten K10 + AWS RDS
 - HashiCorp Vault + Kasten K10
+- OIDC Demonstration with Okta and K10
 - Is there anything we can do with alocal OpenShift cluster demonstration?
