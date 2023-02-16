@@ -33,21 +33,6 @@ Once we have minikube available in our environment
 With the above we will be using Docker as our virtual machine manager. If you have not already you can grab Docker cross platform. 
 [Get Docker](https://docs.docker.com/get-docker/)
 
-Annotate the CSI Hostpath VolumeSnapshotClass for use with K10
-
-```
-kubectl annotate volumesnapshotclass csi-hostpath-snapclass \
-    k10.kasten.io/is-snapshot-class=true
-```
-we also need to change our default storageclass with the following 
-
-```
-kubectl patch storageclass csi-hostpath-sc -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
-
-kubectl patch storageclass standard -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}'
-```
-Patching the storage as above before installing Kasten K10 will result in the Prometheus pod not starting. 
-
 ### Deploy Kasten K10 
 
 Add the Kasten Helm repository
@@ -81,6 +66,27 @@ TOKEN=$(kubectl get secret --namespace kasten-io $TOKEN_NAME -o jsonpath="{.data
 echo "Token value: "
 echo $TOKEN
 ```
+## Storage Changes
+
+Now that K10 is deployed and hopefully healthy we can now make some storage changes. 
+
+Annotate the CSI Hostpath VolumeSnapshotClass for use with K10
+
+```
+kubectl annotate volumesnapshotclass csi-hostpath-snapclass \
+    k10.kasten.io/is-snapshot-class=true
+```
+we also need to change our default storageclass with the following 
+
+```
+kubectl patch storageclass csi-hostpath-sc -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+
+kubectl patch storageclass standard -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}'
+```
+Patching the storage as above before installing Kasten K10 will result in the Prometheus pod not starting. 
+
+
+
 
 ### Deploy Data Services (Pac-Man)
 
