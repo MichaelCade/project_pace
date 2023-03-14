@@ -98,7 +98,7 @@ To expose and access this run the following port-forward in a new terminal
 
 `kubectl port-forward svc/pacman 9191:80 -n pacman`
 
-Open a browser and navigate to [http://localhost:9090/](http://localhost:9090/)
+Open a browser and navigate to [http://localhost:9191/](http://localhost:9191/)
 
 ## Install Minio
 ```
