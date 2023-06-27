@@ -13,22 +13,18 @@ In this session we are going to deploy a minikube cluster to our local workstati
 
 - [Installing Minikube](https://minikube.sigs.k8s.io/docs/start/)
 
-Another option is using [Arkade](https://github.com/alexellis/arkade) with `arkade get minikube` 
-
-With Arkade we also have the ability to install Kasten K10 and Kasten Open-Source projects. 
-
 The minikube installation should also install kubectl or the Kubernetes CLI, you will need this, again available through most package managers cross platform (Chocolatey, apt etc.)
 
 We will also need helm to deploy some of our data services. 
 
-- [kubectl](https://kubernetes.io/docs/tasks/tools/) or `arkade get kubectl`
-- [helm](https://helm.sh/docs/intro/install/) or `arkade get helm`
+- [kubectl](https://kubernetes.io/docs/tasks/tools/) 
+- [helm](https://helm.sh/docs/intro/install/) 
 
 ### Deploy Minikube cluster 
 
 Once we have minikube available in our environment 
 
-`minikube start --addons volumesnapshots,csi-hostpath-driver --apiserver-port=6443 --container-runtime=containerd -p webinar-demo --kubernetes-version=1.21.2`
+`minikube start --addons volumesnapshots,csi-hostpath-driver --apiserver-port=6443 --container-runtime=containerd -p webinar-demo --kubernetes-version=1.26.0`
 
 With the above we will be using Docker as our virtual machine manager. If you have not already you can grab Docker cross platform. 
 [Get Docker](https://docs.docker.com/get-docker/)
@@ -39,13 +35,9 @@ Add the Kasten Helm repository
 
 `helm repo add kasten https://charts.kasten.io/`
 
-We could use `arkade kasten install k10` here as well but for the purpose of the demo we will run through the following steps. [More Details](https://blog.kasten.io/kasten-k10-goes-to-the-arkade)
+Deploy K10, note that this will take around 5 mins 
 
-Create the namespace and deploy K10, note that this will take around 5 mins 
-
-`kubectl create namespace kasten-io`
-
-`helm install k10 kasten/k10 --namespace=kasten-io --set auth.tokenAuth.enabled=true --set injectKanisterSidecar.enabled=true --set-string injectKanisterSidecar.namespaceSelector.matchLabels.k10/injectKanisterSidecar=true`
+`helm install k10 kasten/k10 --namespace=kasten-io --set auth.tokenAuth.enabled=true --set injectKanisterSidecar.enabled=true --set-string injectKanisterSidecar.namespaceSelector.matchLabels.k10/injectKanisterSidecar=true --create-namespace`
 
 You can watch the pods come up by running the following command.
 
@@ -57,7 +49,12 @@ port forward to access the K10 dashboard, open a new terminal to run the below c
 
 The Kasten dashboard will be available at: `http://127.0.0.1:8080/k10/#/`
 
-To authenticate with the dashboard we now need the token which we can get with the following commands. 
+To authenticate with the dashboard we now need the token which we can get with the following commands. Please bare in mind that this is not best practices and if you are running in a production environment then the K10 documentation should be followed accordingly. This is also applicable with Kubernetes clusters newer than v1.24 
+
+```
+kubectl --namespace kasten-io create token k10-k10 --duration=24h
+```
+For clusters older than v1.24 of Kubernetes then you can use this command to retrieve a token to authenticate. 
 
 ```
 TOKEN_NAME=$(kubectl get secret --namespace kasten-io|grep k10-k10-token | cut -d " " -f 1)
@@ -84,9 +81,6 @@ kubectl patch storageclass csi-hostpath-sc -p '{"metadata": {"annotations":{"sto
 kubectl patch storageclass standard -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}'
 ```
 Patching the storage as above before installing Kasten K10 will result in the Prometheus pod not starting. 
-
-
-
 
 ### Deploy Data Services (Pac-Man)
 
