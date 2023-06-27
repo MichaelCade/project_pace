@@ -102,18 +102,20 @@ Open a browser and navigate to [http://localhost:9191/](http://localhost:9191/)
 
 ## Install Minio
 ```
-helm repo add minio https://operator.min.io/
-helm install --namespace minio-operator --create-namespace --generate-name minio/minio-operator
-```
-## Accessing Minio
+helm repo add minio https://helm.min.io/ --insecure-skip-tls-verify
+kubectl create ns minio
 
-Get the JWT for logging in to the console
-````
-kubectl get secret $(kubectl get serviceaccount console-sa --namespace minio-operator -o jsonpath="{.secrets[0].name}") --namespace minio-operator -o jsonpath="{.data.token}" | base64 --decode
-````
+# Deploy minio with a pre-created "kanister-bucket" bucket, and "minioaccess"/"miniosecret" creds
+helm install minio minio/minio --namespace=minio --version 8.0.10 \
+  --set persistence.size=5Gi \
+  --set defaultBucket.enabled=true \
+  --set defaultBucket.name=kanister-bucket \
+  --set accessKey=minioaccess \
+  --set secretKey=miniosecret
+```
 Open a new terminal window to setup port forward to access the Minio Management page in your browser
 ````
-kubectl --namespace minio-operator port-forward svc/console 9090:9090
+kubectl --namespace minio-operator port-forward svc/console 9090:9000
 ````
 Open your browser to http://127.0.0.1:9090 and login with the token from the above step.
 
