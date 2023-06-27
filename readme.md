@@ -38,7 +38,7 @@ The first time you run the command below you will have to wait for the images to
 for reference on my ubuntu laptop this process took 6m 52s to deploy the minikube cluster
 
 ```
-minikube start --addons volumesnapshots,csi-hostpath-driver --apiserver-port=6443 --container-runtime=containerd -p mc-demo --kubernetes-version=1.21.2 
+minikube start --addons volumesnapshots,csi-hostpath-driver --apiserver-port=6443 --container-runtime=containerd -p mc-demo --kubernetes-version=1.26.0 
 ```
 
 
@@ -66,7 +66,12 @@ kubectl --namespace kasten-io port-forward service/gateway 8080:8000
 
 The Kasten dashboard will be available at: `http://127.0.0.1:8080/k10/#/`
 
-To authenticate with the dashboard we now need the token which we can get with the following commands. 
+To authenticate with the dashboard we now need the token which we can get with the following commands. Please bare in mind that this is not best practices and if you are running in a production environment then the K10 documentation should be followed accordingly. This is also applicable with Kubernetes clusters newer than v1.24 
+
+```
+kubectl --namespace kasten-io create token k10-k10 --duration=24h
+```
+For clusters older than v1.24 of Kubernetes then you can use this command to retrieve a token to authenticate. 
 
 ```
 TOKEN_NAME=$(kubectl get secret --namespace kasten-io|grep k10-k10-token | cut -d " " -f 1)
