@@ -99,26 +99,19 @@ Open a browser and navigate to [http://localhost:9191/](http://localhost:9191/)
 helm repo add minio https://helm.min.io/ --insecure-skip-tls-verify
 kubectl create ns minio
 
-# Deploy minio with a pre-created "kanister-bucket" bucket, and "minioaccess"/"miniosecret" creds
+# Deploy minio with a pre-created "k10-bucket" bucket, and "minioaccess"/"miniosecret" creds
 helm install minio minio/minio --namespace=minio --version 8.0.10 \
   --set persistence.size=5Gi \
   --set defaultBucket.enabled=true \
-  --set defaultBucket.name=kanister-bucket \
+  --set defaultBucket.name=k10-bucket \
   --set accessKey=minioaccess \
   --set secretKey=miniosecret
 ```
 Open a new terminal window to setup port forward to access the Minio Management page in your browser
 ````
-kubectl --namespace minio-operator port-forward svc/console 9090:9000
+kubectl --namespace minio port-forward svc/minio 9090:9000
 ````
 Open your browser to http://127.0.0.1:9090 and login with the token from the above step.
-
-## Configuring Minio
-
-On the Tenants tab, select the default tenant (should be named "minio1", then select the "Manage Tenant" button.
-
-1. Within the tenant, click "Service Accounts" and create a service account with the default settings. Copy the Access Key and Secret Key or download the file. 
-2. Click Buckets, and create a bucket with the default settings.
 
 ## Configure S3 storage in Kasten
 1. Click settings in the top right hand corner. Select locations and Create new location.
