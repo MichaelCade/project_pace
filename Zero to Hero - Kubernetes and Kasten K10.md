@@ -116,7 +116,7 @@ Open your browser to http://127.0.0.1:9090 and login with the token from the abo
 ## Configure S3 storage in Kasten
 1. Click settings in the top right hand corner. Select locations and Create new location.
 2. Provide a name, select "S3 Compatible", enter your Access Key and Secret Key you saved earlier.
-3. Set the endpoint as "minio.default.svc.cluster.local" (this is the internal k8s dns name) and select to skip SSL verification.  
+3. Set the endpoint as "http://minio.minio.svc.cluster.local:9000" (this is the internal k8s dns name) and select to skip SSL verification.  
 4. Provide the bucket name you configured and click "Save Profile".
 
 ## Configure the Kasten Policy to export data to the S3 Storage
