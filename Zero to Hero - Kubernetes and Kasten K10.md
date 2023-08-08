@@ -120,11 +120,13 @@ helm upgrade minio minio/minio --namespace minio --create-namespace  \
 ```
 Get the access key and secret key from installation
 
+```bash
 ACCESS_KEY=$(kubectl get secret minio -o jsonpath="{.data.accesskey}" -n minio | base64 --decode)
 SECRET_KEY=$(kubectl get secret minio -o jsonpath="{.data.secretkey}" -n minio | base64 --decode)
 
 echo $ACCESS_KEY
-echo $SECRET_KEY 
+echo $SECRET_KEY
+```
 
 Open a new terminal window to setup port forward to access the Minio Management page in your browser
 
