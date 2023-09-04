@@ -24,7 +24,7 @@ We will also need helm to deploy some of our data services.
 
 Once we have minikube available in our environment 
 
-`minikube start --addons volumesnapshots,csi-hostpath-driver --apiserver-port=6443 --container-runtime=containerd -p webinar-demo --kubernetes-version=1.26.0`
+`minikube start --addons volumesnapshots,csi-hostpath-driver --apiserver-port=6443 --container-runtime=containerd -p webinar-demo --kubernetes-version=1.26.0 `
 
 With the above we will be using Docker as our virtual machine manager. If you have not already you can grab Docker cross platform. 
 [Get Docker](https://docs.docker.com/get-docker/)
@@ -35,15 +35,21 @@ Add the Kasten Helm repository
 
 `helm repo add kasten https://charts.kasten.io/`
 
+Update the repo
+
+`helm repo update kasten`
+
 Deploy K10, note that this will take around 5 mins 
 
-`helm install k10 kasten/k10 --namespace=kasten-io --set auth.tokenAuth.enabled=true --set injectKanisterSidecar.enabled=true --set-string injectKanisterSidecar.namespaceSelector.matchLabels.k10/injectKanisterSidecar=true --create-namespace`
+```bash
+helm install k10 kasten/k10 --namespace=kasten-io --set auth.tokenAuth.enabled=true --set injectKanisterSidecar.enabled=true --set-string injectKanisterSidecar.namespaceSelector.matchLabels.k10/injectKanisterSidecar=true --create-namespace
+```
 
 You can watch the pods come up by running the following command.
 
 `kubectl get pods -n kasten-io -w`
 
-port forward to access the K10 dashboard, open a new terminal to run the below command
+port forward to access the K10 dashboard, open a new `terminal` window to run the below command
 
 `kubectl --namespace kasten-io port-forward service/gateway 8080:8000`
 
@@ -51,12 +57,12 @@ The Kasten dashboard will be available at: `http://127.0.0.1:8080/k10/#/`
 
 To authenticate with the dashboard we now need the token which we can get with the following commands. Please bare in mind that this is not best practices and if you are running in a production environment then the K10 documentation should be followed accordingly. This is also applicable with Kubernetes clusters newer than v1.24 
 
-```
+```bash
 kubectl --namespace kasten-io create token k10-k10 --duration=24h
 ```
 For clusters older than v1.24 of Kubernetes then you can use this command to retrieve a token to authenticate. 
 
-```
+```bash
 TOKEN_NAME=$(kubectl get secret --namespace kasten-io|grep k10-k10-token | cut -d " " -f 1)
 TOKEN=$(kubectl get secret --namespace kasten-io $TOKEN_NAME -o jsonpath="{.data.token}" | base64 --decode)
 
@@ -69,13 +75,13 @@ Now that K10 is deployed and hopefully healthy we can now make some storage chan
 
 Annotate the CSI Hostpath VolumeSnapshotClass for use with K10
 
-```
+```bash
 kubectl annotate volumesnapshotclass csi-hostpath-snapclass \
     k10.kasten.io/is-snapshot-class=true
 ```
 we also need to change our default storageclass with the following 
 
-```
+```bash
 kubectl patch storageclass csi-hostpath-sc -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
 
 kubectl patch storageclass standard -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}'
@@ -84,9 +90,14 @@ Patching the storage as above before installing Kasten K10 will result in the Pr
 
 ### Deploy Data Services (Pac-Man)
 
-Make sure you are in the directory where this YAML config file is and run against your cluster. 
+Setup the Pac-Man demo app using helm. This takes around 2 minutes.
 
-`kubectl create -f pacman-stateful-demo.yaml`
+```bash
+helm repo add pacman https://shuguet.github.io/pacman/
+helm repo update pacman
+
+helm install pacman pacman/pacman -n pacman --create-namespace --wait
+```
 
 To expose and access this run the following port-forward in a new terminal
 
@@ -95,29 +106,42 @@ To expose and access this run the following port-forward in a new terminal
 Open a browser and navigate to [http://localhost:9191/](http://localhost:9191/)
 
 ## Install Minio
-```
-helm repo add minio https://helm.min.io/ --insecure-skip-tls-verify
-kubectl create ns minio
+```bash
+helm repo add minio https://charts.min.io/
+helm repo update minio
 
 # Deploy minio with a pre-created "k10-bucket" bucket, and "minioaccess"/"miniosecret" creds
-helm install minio minio/minio --namespace=minio --version 8.0.10 \
+helm upgrade minio minio/minio --namespace minio --create-namespace  \
+  --install \
+  --set rootUser=rootuser,rootPassword=rootpass123 \
   --set persistence.size=5Gi \
-  --set defaultBucket.enabled=true \
-  --set defaultBucket.name=k10-bucket \
-  --set accessKey=minioaccess \
-  --set secretKey=miniosecret
+  --set resources.requests.memory=2Gi \
+  --set mode=standalone \
+  --set 'buckets[0].name=k10-bucket,buckets[0].policy=none,buckets[0].purge=false' \
+  --wait
 ```
+Get the access key and secret key from installation
+
+```bash
+ACCESS_KEY=$(kubectl get secret minio -o jsonpath="{.data.accesskey}" -n minio | base64 --decode)
+SECRET_KEY=$(kubectl get secret minio -o jsonpath="{.data.secretkey}" -n minio | base64 --decode)
+
+echo $ACCESS_KEY
+echo $SECRET_KEY
+```
+
 Open a new terminal window to setup port forward to access the Minio Management page in your browser
-````
+
+````bash
 kubectl --namespace minio port-forward svc/minio 9090:9000
 ````
-Open your browser to http://127.0.0.1:9090 and login with the token from the above step.
+Open your browser to http://127.0.0.1:9090 and login with the credentials from the above `echo` commands. 
 
 ## Configure S3 storage in Kasten
 1. Click settings in the top right hand corner. Select locations and Create new location.
-2. Provide a name, select "S3 Compatible", enter your Access Key and Secret Key you saved earlier.
+2. Provide a name, select "S3 Compatible", enter your Access Key and Secret Key you saved earlier from the `echo` commands.
 3. Set the endpoint as "http://minio.minio.svc.cluster.local:9000" (this is the internal k8s dns name) and select to skip SSL verification.  
-4. Provide the bucket name you configured and click "Save Profile".
+4. Provide the bucket name "k10-bucket" and click "Save Profile".
 
 ## Configure the Kasten Policy to export data to the S3 Storage
 1. Edit your existing policy.
@@ -129,7 +153,7 @@ Manually browse the Bucket from the Minio browser console, you will see your buc
 
 ![image](https://user-images.githubusercontent.com/22192242/138359395-b4175851-9da8-46d7-86b7-7cf3ee1e5fee.png)
 
-![image](https://user-images.githubusercontent.com/22192242/138359447-a6c316f7-a8d6-414b-af7e-6157867cb5bc.png)
+![image](assets/minio-s3-kasten-k10-bucket.png)
 
 ### Dive into Kasten K10 
 
