@@ -9,6 +9,21 @@ add_helm_repos() {
   echo "Helm repositories added and updated."
 }
 
+# Deploy PostgreSQL 
+deploy_postgres() {
+  echo "Deploying WordPress with PostgreSQL..."
+  kubectl create namespace postgres || true
+
+  # Deploy PostgreSQL
+  helm upgrade --install my-postgresql bitnami/postgresql \
+    --namespace wordpress \
+    --set auth.postgresPassword=myPassword \
+    --set auth.username=myUser \
+    --set auth.database=myDatabase
+
+  echo "PostgreSQL deployment complete."
+}
+
 # Deploy PostgreSQL and WordPress
 deploy_wordpress() {
   echo "Deploying WordPress with PostgreSQL..."
@@ -64,7 +79,8 @@ deploy_jupyterhub() {
 
 # Usage function
 usage() {
-  echo "Usage: $0 [-w] [-g] [-j]"
+  echo "Usage: $0 [-p] [-w] [-g] [-j]"
+  echo "  -p, --postgres     Deploy PostgreSQL"
   echo "  -w, --wordpress    Deploy WordPress"
   echo "  -g, --ghost        Deploy Ghost"
   echo "  -j, --jupyterhub   Deploy JupyterHub"
@@ -73,6 +89,7 @@ usage() {
 }
 
 # Main script
+deploy_postgres_flag=false
 deploy_wordpress_flag=false
 deploy_ghost_flag=false
 deploy_jupyterhub_flag=false
@@ -80,12 +97,14 @@ deploy_jupyterhub_flag=false
 # Parse command line arguments
 if [ $# -eq 0 ]; then
   # No arguments, deploy all apps
+  deploy_postgres_flag=false
   deploy_wordpress_flag=true
   deploy_ghost_flag=true
   deploy_jupyterhub_flag=true
 else
   while [[ "$#" -gt 0 ]]; do
     case $1 in
+      -p|--postgres) deploy_postgres_flag=true ;;
       -w|--wordpress) deploy_wordpress_flag=true ;;
       -g|--ghost) deploy_ghost_flag=true ;;
       -j|--jupyterhub) deploy_jupyterhub_flag=true ;;
@@ -99,6 +118,10 @@ fi
 add_helm_repos
 
 # Deploy selected apps
+if [ "$deploy_postgres_flag" = true ]; then
+  deploy_postgres
+fi
+
 if [ "$deploy_wordpress_flag" = true ]; then
   deploy_wordpress
 fi
