@@ -9,38 +9,44 @@ add_helm_repos() {
   echo "Helm repositories added and updated."
 }
 
-# Deploy PostgreSQL 
+# Deploy PostgreSQL
 deploy_postgres() {
-  echo "Deploying WordPress with PostgreSQL..."
+  echo "Deploying PostgreSQL..."
   kubectl create namespace postgres || true
 
   # Deploy PostgreSQL
   helm upgrade --install my-postgresql bitnami/postgresql \
-    --namespace wordpress \
+    --namespace postgres \
     --set auth.postgresPassword=myPassword \
     --set auth.username=myUser \
     --set auth.database=myDatabase
 
   echo "PostgreSQL deployment complete."
+
+  # Extract and print PostgreSQL credentials
+  postgres_password=$(kubectl get secret --namespace postgres my-postgresql -o jsonpath="{.data.postgresql-password}" | base64 --decode)
+  postgres_user=$(kubectl get secret --namespace postgres my-postgresql -o jsonpath="{.data.postgresql-username}" | base64 --decode)
+
+  echo "PostgreSQL Credentials:"
+  echo "  Username: $postgres_user"
+  echo "  Password: $postgres_password"
+  echo "  Host: my-postgresql.postgres.svc.cluster.local"
+  echo "  Database: myDatabase"
+
+  echo "To connect to PostgreSQL using kubectl:"
+  echo "  kubectl run -n postgres -it --rm --image bitnami/postgresql:latest --env=\"PGPASSWORD=$postgres_password\" postgres-client -- psql --host my-postgresql.postgres.svc.cluster.local -U $postgres_user -d myDatabase"
 }
 
-# Deploy PostgreSQL and WordPress
+# Deploy WordPress
 deploy_wordpress() {
-  echo "Deploying WordPress with PostgreSQL..."
+  echo "Deploying WordPress..."
   kubectl create namespace wordpress || true
 
-  # Deploy PostgreSQL
-  helm upgrade --install my-postgresql bitnami/postgresql \
-    --namespace wordpress \
-    --set auth.postgresPassword=myPassword \
-    --set auth.username=myUser \
-    --set auth.database=myDatabase
-
-  # Deploy WordPress
+  # Deploy WordPress (connecting to the PostgreSQL database)
   helm upgrade --install my-wordpress bitnami/wordpress \
     --namespace wordpress \
     --set mariadb.enabled=false \
-    --set externalDatabase.host=my-postgresql.wordpress.svc.cluster.local \
+    --set externalDatabase.host=my-postgresql.postgres.svc.cluster.local \
     --set externalDatabase.user=myUser \
     --set externalDatabase.password=myPassword \
     --set externalDatabase.database=myDatabase
@@ -56,7 +62,7 @@ deploy_ghost() {
   helm upgrade --install my-ghost bitnami/ghost \
     --namespace ghost \
     --set mariadb.enabled=false \
-    --set externalDatabase.host=my-postgresql.wordpress.svc.cluster.local \
+    --set externalDatabase.host=my-postgresql.postgres.svc.cluster.local \
     --set externalDatabase.user=myUser \
     --set externalDatabase.password=myPassword \
     --set externalDatabase.database=myDatabase
@@ -84,7 +90,7 @@ usage() {
   echo "  -w, --wordpress    Deploy WordPress"
   echo "  -g, --ghost        Deploy Ghost"
   echo "  -j, --jupyterhub   Deploy JupyterHub"
-  echo "If no options are provided, all three apps will be deployed."
+  echo "If no options are provided, all apps will be deployed (except PostgreSQL)."
   exit 1
 }
 
@@ -96,8 +102,7 @@ deploy_jupyterhub_flag=false
 
 # Parse command line arguments
 if [ $# -eq 0 ]; then
-  # No arguments, deploy all apps
-  deploy_postgres_flag=false
+  # No arguments, deploy all apps except PostgreSQL
   deploy_wordpress_flag=true
   deploy_ghost_flag=true
   deploy_jupyterhub_flag=true
